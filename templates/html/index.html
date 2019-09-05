@@ -13,13 +13,13 @@
 	 }
 	</style>
     </head>
-    <body data-style-url="{{ .StyleURL }}" data-nextzen-api-key="{{ .APIKey }}">
+    <body>
 	<div id="map"></div>
     </body>
     <script>
 
      var api_key = document.body.getAttribute("data-nextzen-api-key");
-     var style_url = document.body.getAttribute("data-style-url");
+     var style_url = document.body.getAttribute("data-nextzen-style-url");
 
      var map = L.map("map");    
 

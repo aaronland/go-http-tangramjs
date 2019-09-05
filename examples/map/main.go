@@ -11,12 +11,7 @@ import (
 	"net/http"
 )
 
-type MapVars struct {
-	APIKey   string
-	StyleURL string
-}
-
-func MapHandler(templates *template.Template, map_vars *MapVars) (http.Handler, error) {
+func MapHandler(templates *template.Template) (http.Handler, error) {
 
 	t := templates.Lookup("map")
 
@@ -26,7 +21,7 @@ func MapHandler(templates *template.Template, map_vars *MapVars) (http.Handler, 
 
 	fn := func(rsp http.ResponseWriter, req *http.Request) {
 
-		err := t.Execute(rsp, map_vars)
+		err := t.Execute(rsp, nil)
 
 		if err != nil {
 			http.Error(rsp, err.Error(), http.StatusInternalServerError)
@@ -81,19 +76,16 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	map_vars := &MapVars{
-		APIKey:   *api_key,
-		StyleURL: *style_url,
-	}
-
-	map_handler, err := MapHandler(t, map_vars)
+	map_handler, err := MapHandler(t)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
-
+	tangramjs_opts.Nextzen.APIKey = *api_key
+	tangramjs_opts.Nextzen.StyleURL = *style_url
+	
 	map_handler = tangramjs.AppendResourcesHandler(map_handler, tangramjs_opts)
 
 	mux.Handle("/", map_handler)

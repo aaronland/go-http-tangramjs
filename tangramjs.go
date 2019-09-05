@@ -9,22 +9,30 @@ import (
 	"strings"
 )
 
+type NextzenOptions struct {
+	APIKey string
+	StyleURL string
+}
+
 type TangramJSOptions struct {
 	JS      []string
 	CSS     []string
+	Nextzen *NextzenOptions
 	Leaflet *leaflet.LeafletOptions
 }
 
 func DefaultTangramJSOptions() *TangramJSOptions {
 
 	leaflet_opts := leaflet.DefaultLeafletOptions()
-
+	nextzen_opts := &NextzenOptions{}
+	
 	opts := &TangramJSOptions{
 		CSS: []string{},
 		JS: []string{
 			"/javascript/tangram.min.js",
 		},
 		Leaflet: leaflet_opts,
+		Nextzen: nextzen_opts,
 	}
 
 	return opts
@@ -50,9 +58,15 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 		}
 	}
 
+	attrs := map[string]string{
+		"nextzen-api-key": opts.Nextzen.APIKey,
+		"nextzen-style-url": opts.Nextzen.StyleURL,		
+	}
+	
 	append_opts := &rewrite.AppendResourcesOptions{
 		JavaScript:  js,
 		Stylesheets: css,
+		DataAttributes: attrs,
 	}
 
 	next = leaflet.AppendResourcesHandlerWithPrefix(next, opts.Leaflet, prefix)
