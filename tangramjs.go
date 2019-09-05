@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const NEXTZEN_MVT_ENDPOINT string = "https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt"
+
 type NextzenOptions struct {
 	APIKey   string
 	StyleURL string
@@ -20,7 +22,7 @@ func DefaultNextzenOptions() *NextzenOptions {
 	opts := &NextzenOptions{
 		APIKey:   "",
 		StyleURL: "",
-		TileURL:  "https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt",
+		TileURL:  NEXTZEN_MVT_ENDPOINT,
 	}
 
 	return opts
