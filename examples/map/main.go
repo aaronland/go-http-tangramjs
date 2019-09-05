@@ -4,15 +4,16 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/aaronland/go-http-leaflet"
-	"github.com/aaronland/go-http-leaflet/assets/templates"
+	"github.com/aaronland/go-http-tangramjs"
+	"github.com/aaronland/go-http-tangramjs/assets/templates"
 	"html/template"
 	"log"
 	"net/http"
 )
 
 type MapVars struct {
-	TileURL string
+	APIKey   string
+	StyleURL string
 }
 
 func MapHandler(templates *template.Template, map_vars *MapVars) (http.Handler, error) {
@@ -41,8 +42,9 @@ func main() {
 
 	host := flag.String("host", "localhost", "...")
 	port := flag.Int("port", 8080, "...")
+	api_key := flag.String("api-key", "", "...")
 
-	tile_url := flag.String("tile-url", "", "A valid Leaflet layer tile URL")
+	style_url := flag.String("style-url", "/tangram/refill-style.zip", "A valid Leaflet layer tile URL")
 	path_templates := flag.String("templates", "", "An optional string for local templates. This is anything that can be read by the 'templates.ParseGlob' method.")
 
 	flag.Parse()
@@ -77,13 +79,12 @@ func main() {
 		}
 	}
 
-	map_vars := new(MapVars)
-
-	if *tile_url != "" {
-		map_vars.TileURL = *tile_url
-	}
-
 	mux := http.NewServeMux()
+
+	map_vars := &MapVars{
+		APIKey:   *api_key,
+		StyleURL: *style_url,
+	}
 
 	map_handler, err := MapHandler(t, map_vars)
 
@@ -91,13 +92,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	leaflet_opts := leaflet.DefaultLeafletOptions()
+	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
 
-	map_handler = leaflet.AppendResourcesHandler(map_handler, leaflet_opts)
+	map_handler = tangramjs.AppendResourcesHandler(map_handler, tangramjs_opts)
 
 	mux.Handle("/", map_handler)
 
-	err = leaflet.AppendAssetHandlers(mux)
+	err = tangramjs.AppendAssetHandlers(mux)
 
 	if err != nil {
 		log.Fatal(err)

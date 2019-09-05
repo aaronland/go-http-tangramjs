@@ -1,3 +1,6 @@
+# github.com/aaronland/go-http-leaflet v0.0.1
+github.com/aaronland/go-http-leaflet
+github.com/aaronland/go-http-leaflet/assets/templates
 # github.com/aaronland/go-http-rewrite v0.0.4
 github.com/aaronland/go-http-rewrite
 # github.com/whosonfirst/go-bindata v0.1.0

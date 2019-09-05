@@ -1,6 +1,7 @@
 package tangramjs
 
 import (
+	"github.com/aaronland/go-http-leaflet"
 	"github.com/aaronland/go-http-rewrite"
 	_ "log"
 	"net/http"
@@ -9,19 +10,21 @@ import (
 )
 
 type TangramJSOptions struct {
-	JS  []string
-	CSS []string
+	JS      []string
+	CSS     []string
+	Leaflet *leaflet.LeafletOptions
 }
 
 func DefaultTangramJSOptions() *TangramJSOptions {
 
-	opts := &TangramJSOptions{
-		CSS: []string{
+	leaflet_opts := leaflet.DefaultLeafletOptions()
 
-		},
+	opts := &TangramJSOptions{
+		CSS: []string{},
 		JS: []string{
 			"/javascript/tangram.min.js",
 		},
+		Leaflet: leaflet_opts,
 	}
 
 	return opts
@@ -47,12 +50,14 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 		}
 	}
 
-	ext_opts := &rewrite.AppendResourcesOptions{
+	append_opts := &rewrite.AppendResourcesOptions{
 		JavaScript:  js,
 		Stylesheets: css,
 	}
 
-	return rewrite.AppendResourcesHandler(next, ext_opts)
+	next = leaflet.AppendResourcesHandlerWithPrefix(next, opts.Leaflet, prefix)
+
+	return rewrite.AppendResourcesHandler(next, append_opts)
 }
 
 func AssetsHandler() (http.Handler, error) {
@@ -89,6 +94,12 @@ func AppendAssetHandlers(mux *http.ServeMux) error {
 }
 
 func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
+
+	err := leaflet.AppendAssetHandlersWithPrefix(mux, prefix)
+
+	if err != nil {
+		return err
+	}
 
 	asset_handler, err := AssetsHandlerWithPrefix(prefix)
 

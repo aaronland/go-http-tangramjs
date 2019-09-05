@@ -4,64 +4,46 @@
 	<title>debug</title>
 	<style type="text/css">
 	 body {
-	margin: 0px;
-	padding: 0px;
+		 margin: 0px;
+		 padding: 0px;
 	 }
-
-#map {
-	width:100%;
-	height:80vh;
-}
-
-#current-template {
-	font-family:monospace;
-	display:block;
-	text-align:center;
-	margin-top:.25rem;
-}
-
-#current-tile {
-	font-family:monospace;
-	display:block;
-	text-align:center;
-	margin-top:.5rem;
-	color:#666;
-}
-
-#controls {
-	padding:.5rem;
-	width: 80vw;
-	margin: 0 auto;
-	margin-top:2rem;		
-}
-
-#controls input {
-	width: 80vw;
-	font-size:1.5rem;
-	margin-top:.5rem;	
-	margin-bottom:.5rem;
-}
-
-#controls button {
-	font-size:.8rem;
-	border:solid thin;
-	padding: .6rem;
-	margin:0px !important;
-}
-
+	 #map {
+		 width:100%;
+		 height:100vh;
+	 }
 	</style>
     </head>
-    <body data-tile-url="{{ .TileURL }}">
+    <body data-style-url="{{ .StyleURL }}" data-nextzen-api-key="{{ .APIKey }}">
 	<div id="map"></div>
-	<span id="current-template">....</span>
-	<span id="current-tile"></span>	
-	<div id="controls">
-	    <input type="text" id="url_template" name="url_template" value="" placeholder="Enter an alternate URL template here" />
-	    <button type="submit" id="update">Update</button>
-	</div>
     </body>
     <script>
+
+     var api_key = document.body.getAttribute("data-nextzen-api-key");
+     var style_url = document.body.getAttribute("data-style-url");
+
+     var map = L.map("map");    
+
+     var tangramOptions = {
+         scene: {
+             import: [
+                 style_url
+             ],
+             sources: {
+                 mapzen: {
+                     url: 'https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt',
+                     url_subdomains: ['a', 'b', 'c', 'd'],
+                     url_params: {api_key: api_key},
+                     tile_size: 512,
+                     max_zoom: 16
+                 }
+             }
+         }
+     };
      
+     var tangramLayer = Tangram.leafletLayer(tangramOptions);
+     tangramLayer.addTo(map);
+     
+     map.setView([40.70531887544228, -74.00976419448853], 15);
     </script>
 </html>
 {{ end }}
