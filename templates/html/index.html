@@ -20,7 +20,8 @@
 
      var api_key = document.body.getAttribute("data-nextzen-api-key");
      var style_url = document.body.getAttribute("data-nextzen-style-url");
-
+     var tile_url = document.body.getAttribute("data-nextzen-tile-url");
+     
      var map = L.map("map");    
 
      var tangramOptions = {
@@ -30,7 +31,7 @@
              ],
              sources: {
                  mapzen: {
-                     url: 'https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt',
+                     url: tile_url,
                      url_subdomains: ['a', 'b', 'c', 'd'],
                      url_params: {api_key: api_key},
                      tile_size: 512,

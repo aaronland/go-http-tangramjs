@@ -10,8 +10,20 @@ import (
 )
 
 type NextzenOptions struct {
-	APIKey string
+	APIKey   string
 	StyleURL string
+	TileURL  string
+}
+
+func DefaultNextzenOptions() *NextzenOptions {
+
+	opts := &NextzenOptions{
+		APIKey:   "",
+		StyleURL: "",
+		TileURL:  "https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt",
+	}
+
+	return opts
 }
 
 type TangramJSOptions struct {
@@ -24,8 +36,8 @@ type TangramJSOptions struct {
 func DefaultTangramJSOptions() *TangramJSOptions {
 
 	leaflet_opts := leaflet.DefaultLeafletOptions()
-	nextzen_opts := &NextzenOptions{}
-	
+	nextzen_opts := DefaultNextzenOptions()
+
 	opts := &TangramJSOptions{
 		CSS: []string{},
 		JS: []string{
@@ -59,13 +71,14 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 	}
 
 	attrs := map[string]string{
-		"nextzen-api-key": opts.Nextzen.APIKey,
-		"nextzen-style-url": opts.Nextzen.StyleURL,		
+		"nextzen-api-key":   opts.Nextzen.APIKey,
+		"nextzen-style-url": opts.Nextzen.StyleURL,
+		"nextzen-tile-url":  opts.Nextzen.TileURL,
 	}
-	
+
 	append_opts := &rewrite.AppendResourcesOptions{
-		JavaScript:  js,
-		Stylesheets: css,
+		JavaScript:     js,
+		Stylesheets:    css,
 		DataAttributes: attrs,
 	}
 

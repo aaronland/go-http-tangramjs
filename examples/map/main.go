@@ -85,7 +85,7 @@ func main() {
 	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
 	tangramjs_opts.Nextzen.APIKey = *api_key
 	tangramjs_opts.Nextzen.StyleURL = *style_url
-	
+
 	map_handler = tangramjs.AppendResourcesHandler(map_handler, tangramjs_opts)
 
 	mux.Handle("/", map_handler)
