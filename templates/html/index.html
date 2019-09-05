@@ -1,0 +1,67 @@
+{{ define "map" }}
+<html>
+    <head>
+	<title>debug</title>
+	<style type="text/css">
+	 body {
+	margin: 0px;
+	padding: 0px;
+	 }
+
+#map {
+	width:100%;
+	height:80vh;
+}
+
+#current-template {
+	font-family:monospace;
+	display:block;
+	text-align:center;
+	margin-top:.25rem;
+}
+
+#current-tile {
+	font-family:monospace;
+	display:block;
+	text-align:center;
+	margin-top:.5rem;
+	color:#666;
+}
+
+#controls {
+	padding:.5rem;
+	width: 80vw;
+	margin: 0 auto;
+	margin-top:2rem;		
+}
+
+#controls input {
+	width: 80vw;
+	font-size:1.5rem;
+	margin-top:.5rem;	
+	margin-bottom:.5rem;
+}
+
+#controls button {
+	font-size:.8rem;
+	border:solid thin;
+	padding: .6rem;
+	margin:0px !important;
+}
+
+	</style>
+    </head>
+    <body data-tile-url="{{ .TileURL }}">
+	<div id="map"></div>
+	<span id="current-template">....</span>
+	<span id="current-tile"></span>	
+	<div id="controls">
+	    <input type="text" id="url_template" name="url_template" value="" placeholder="Enter an alternate URL template here" />
+	    <button type="submit" id="update">Update</button>
+	</div>
+    </body>
+    <script>
+     
+    </script>
+</html>
+{{ end }}
