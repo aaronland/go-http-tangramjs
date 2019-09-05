@@ -1,6 +1,6 @@
-# go-http-leaflet
+# go-http-tangramjs
 
-Go HTTP middleware for Leaflet (1.5.1)
+Go HTTP middleware for TangramJS (v0.19.0)
 
 ## Important
 
@@ -8,4 +8,5 @@ This is work in progress.
 
 ## See also
 
-* https://leafletjs.com
+* https://github.com/tangrams/tangram
+* https://github.com/aaronland/go-http-leaflet
