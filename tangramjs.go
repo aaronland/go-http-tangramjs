@@ -61,6 +61,12 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 	js := opts.JS
 	css := opts.CSS
 
+	attrs := map[string]string{
+		"nextzen-api-key":   opts.Nextzen.APIKey,
+		"nextzen-style-url": opts.Nextzen.StyleURL,
+		"nextzen-tile-url":  opts.Nextzen.TileURL,
+	}
+
 	if prefix != "" {
 
 		for i, path := range js {
@@ -70,12 +76,13 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 		for i, path := range css {
 			css[i] = appendPrefix(prefix, path)
 		}
-	}
 
-	attrs := map[string]string{
-		"nextzen-api-key":   opts.Nextzen.APIKey,
-		"nextzen-style-url": opts.Nextzen.StyleURL,
-		"nextzen-tile-url":  opts.Nextzen.TileURL,
+		for k, path := range attrs {
+
+			if strings.HasSuffix(k, "-url") && !strings.HasPrefix(path, "http") {
+				attrs[k] = appendPrefix(prefix, path)
+			}
+		}
 	}
 
 	append_opts := &rewrite.AppendResourcesOptions{
