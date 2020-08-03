@@ -83,7 +83,7 @@ func templatesHtmlIndexHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/html/index.html", size: 1149, mode: os.FileMode(420), modTime: time.Unix(1567714979, 0)}
+	info := bindataFileInfo{name: "templates/html/index.html", size: 1149, mode: os.FileMode(420), modTime: time.Unix(1596468643, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
