@@ -1,9 +1,12 @@
 package tangramjs
 
 import (
+	"fmt"
 	"github.com/aaronland/go-http-leaflet"
 	"github.com/aaronland/go-http-rewrite"
-	_ "log"
+	"github.com/aaronland/go-http-tangramjs/static"
+	"io/fs"
+	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -98,8 +101,8 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 
 func AssetsHandler() (http.Handler, error) {
 
-	fs := assetFS()
-	return http.FileServer(fs), nil
+	http_fs := http.FS(static.FS)
+	return http.FileServer(http_fs), nil
 }
 
 func AssetsHandlerWithPrefix(prefix string) (http.Handler, error) {
@@ -143,18 +146,27 @@ func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
 		return nil
 	}
 
-	for _, path := range AssetNames() {
+	walk_func := func(path string, d fs.DirEntry, err error) error {
 
-		path := strings.Replace(path, "static", "", 1)
+		if path == "." {
+			return nil
+		}
 
 		if prefix != "" {
 			path = appendPrefix(prefix, path)
 		}
 
+		if !strings.HasPrefix(path, "/") {
+			path = fmt.Sprintf("/%s", path)
+		}
+
+		log.Println("APPEND", path)
+
 		mux.Handle(path, asset_handler)
+		return nil
 	}
 
-	return nil
+	return fs.WalkDir(static.FS, ".", walk_func)
 }
 
 func appendPrefix(prefix string, path string) string {

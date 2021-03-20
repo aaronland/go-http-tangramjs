@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/aaronland/go-http-tangramjs"
-	"github.com/aaronland/go-http-tangramjs/assets/templates"
+	"github.com/aaronland/go-http-tangramjs/templates/html"
 	"html/template"
 	"log"
 	"net/http"
@@ -40,38 +40,13 @@ func main() {
 	api_key := flag.String("api-key", "", "...")
 
 	style_url := flag.String("style-url", "/tangram/refill-style.zip", "A valid Leaflet layer tile URL")
-	path_templates := flag.String("templates", "", "An optional string for local templates. This is anything that can be read by the 'templates.ParseGlob' method.")
 
 	flag.Parse()
 
-	t := template.New("example")
+	t, err := template.ParseFS(html.FS, "*.html")
 
-	var err error
-
-	if *path_templates != "" {
-
-		t, err = t.ParseGlob(*path_templates)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-	} else {
-
-		for _, name := range templates.AssetNames() {
-
-			body, err := templates.Asset(name)
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			t, err = t.Parse(string(body))
-
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
+	if err != nil {
+		log.Fatalf("Failed to parse templates, %v", err)
 	}
 
 	mux := http.NewServeMux()
@@ -79,7 +54,7 @@ func main() {
 	map_handler, err := MapHandler(t)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to create map handler, %v", err)
 	}
 
 	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
@@ -93,7 +68,7 @@ func main() {
 	err = tangramjs.AppendAssetHandlers(mux)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to append Tangram asset handlers, %v", err)
 	}
 
 	endpoint := fmt.Sprintf("%s:%d", *host, *port)
@@ -102,7 +77,7 @@ func main() {
 	err = http.ListenAndServe(endpoint, mux)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to serve requests, %v", err)
 	}
 
 }
