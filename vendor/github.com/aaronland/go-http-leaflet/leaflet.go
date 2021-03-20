@@ -1,11 +1,11 @@
 package leaflet
 
 import (
-	"github.com/aaronland/go-http-rewrite"
-	"github.com/aaronland/go-http-leaflet/static"	
-	_ "log"
 	"fmt"
+	"github.com/aaronland/go-http-leaflet/static"
+	"github.com/aaronland/go-http-rewrite"
 	"io/fs"
+	_ "log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -21,11 +21,11 @@ func DefaultLeafletOptions() *LeafletOptions {
 	opts := &LeafletOptions{
 		CSS: []string{
 			"/css/leaflet.css",
-			"/css/leaflet.fullscreen.css",			
+			"/css/leaflet.fullscreen.css",
 		},
 		JS: []string{
 			"/javascript/leaflet.js",
-			"/javascript/leaflet.fullscreen.min.js",			
+			"/javascript/leaflet.fullscreen.min.js",
 			"/javascript/leaflet-hash.js",
 		},
 	}
@@ -102,9 +102,13 @@ func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
 		return nil
 	}
 
-	walk_func := func(path string, d fs.DirEntry, err error) error {
+	walk_func := func(path string, info fs.DirEntry, err error) error {
 
 		if path == "." {
+			return nil
+		}
+
+		if info.IsDir() {
 			return nil
 		}
 
@@ -117,7 +121,7 @@ func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
 		}
 
 		// log.Println("APPEND", path)
-		
+
 		mux.Handle(path, asset_handler)
 		return nil
 	}

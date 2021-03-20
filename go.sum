@@ -8,6 +8,8 @@ github.com/aaronland/go-http-leaflet v0.0.4 h1:NDmq4ZwcG6KP2EnQy9NgheyZEXeTLpdFi
 github.com/aaronland/go-http-leaflet v0.0.4/go.mod h1:jUzEnGKezjceuNtQJIZWy2nXMhuteRSK0BPIjSSniBw=
 github.com/aaronland/go-http-leaflet v0.0.5 h1:7JqSTtEOAJCBHUeLCI84eglZoTQRDc+qzwkNbx6iNJU=
 github.com/aaronland/go-http-leaflet v0.0.5/go.mod h1:M6Brt/UMWXsT+3qK5idwxr3y6kELHHi7OhgoiecMt6U=
+github.com/aaronland/go-http-leaflet v0.0.6 h1:8pLfLudvmids0v+B86Y3tL2Q3EUJjidjV/diJqrJdyg=
+github.com/aaronland/go-http-leaflet v0.0.6/go.mod h1:M6Brt/UMWXsT+3qK5idwxr3y6kELHHi7OhgoiecMt6U=
 github.com/aaronland/go-http-rewrite v0.0.4 h1:lI8cDF/nINjuSPrYpwvlJLa1cC32h1nvmBwRRHs9sow=
 github.com/aaronland/go-http-rewrite v0.0.4/go.mod h1:g62jjXpsArD0lzJLs9bVLR9Locdt3f4OmqFkkJL2rQU=
 github.com/aaronland/go-http-rewrite v0.0.6 h1:IGmNgC+VIkOPw9h9kdhqZT48oaUbeaRgGMvy7k3HfPc=

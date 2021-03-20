@@ -6,7 +6,7 @@ import (
 	"github.com/aaronland/go-http-rewrite"
 	"github.com/aaronland/go-http-tangramjs/static"
 	"io/fs"
-	"log"
+	_ "log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -146,9 +146,13 @@ func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
 		return nil
 	}
 
-	walk_func := func(path string, d fs.DirEntry, err error) error {
+	walk_func := func(path string, info fs.DirEntry, err error) error {
 
 		if path == "." {
+			return nil
+		}
+
+		if info.IsDir() {
 			return nil
 		}
 
@@ -160,7 +164,7 @@ func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
 			path = fmt.Sprintf("/%s", path)
 		}
 
-		log.Println("APPEND", path)
+		// log.Println("APPEND", path)
 
 		mux.Handle(path, asset_handler)
 		return nil
