@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/aaronland/go-http-leaflet"
 	"github.com/aaronland/go-http-tangramjs"
 	"github.com/aaronland/go-http-tangramjs/templates/html"
 	"html/template"
@@ -41,6 +42,8 @@ func main() {
 
 	style_url := flag.String("style-url", "/tangram/refill-style.zip", "A valid Leaflet layer tile URL")
 
+	append_leaflet := flag.Bool("append-leaflet", true, "...")
+
 	flag.Parse()
 
 	t, err := template.ParseFS(html.FS, "*.html")
@@ -55,6 +58,21 @@ func main() {
 
 	if err != nil {
 		log.Fatalf("Failed to create map handler, %v", err)
+	}
+
+	if !*append_leaflet {
+
+		tangramjs.APPEND_LEAFLET_RESOURCES = false
+		tangramjs.APPEND_LEAFLET_ASSETS = false
+
+		leaflet_opts := leaflet.DefaultLeafletOptions()
+		map_handler = leaflet.AppendResourcesHandler(map_handler, leaflet_opts)
+
+		err = leaflet.AppendAssetHandlers(mux)
+
+		if err != nil {
+			log.Fatalf("Failed to append Leaflet asset handlers, %v", err)
+		}
 	}
 
 	tangramjs_opts := tangramjs.DefaultTangramJSOptions()

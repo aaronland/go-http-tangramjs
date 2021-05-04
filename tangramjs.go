@@ -14,10 +14,18 @@ import (
 
 const NEXTZEN_MVT_ENDPOINT string = "https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt"
 
+var APPEND_LEAFLET_RESOURCES bool
+var APPEND_LEAFLET_ASSETS bool
+
 type NextzenOptions struct {
 	APIKey   string
 	StyleURL string
 	TileURL  string
+}
+
+func init() {
+	APPEND_LEAFLET_RESOURCES = true
+	APPEND_LEAFLET_ASSETS = true
 }
 
 func DefaultNextzenOptions() *NextzenOptions {
@@ -94,7 +102,9 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 		DataAttributes: attrs,
 	}
 
-	next = leaflet.AppendResourcesHandlerWithPrefix(next, opts.Leaflet, prefix)
+	if APPEND_LEAFLET_RESOURCES {
+		next = leaflet.AppendResourcesHandlerWithPrefix(next, opts.Leaflet, prefix)
+	}
 
 	return rewrite.AppendResourcesHandler(next, append_opts)
 }
@@ -134,10 +144,13 @@ func AppendAssetHandlers(mux *http.ServeMux) error {
 
 func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
 
-	err := leaflet.AppendAssetHandlersWithPrefix(mux, prefix)
+	if APPEND_LEAFLET_ASSETS {
 
-	if err != nil {
-		return err
+		err := leaflet.AppendAssetHandlersWithPrefix(mux, prefix)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	asset_handler, err := AssetsHandlerWithPrefix(prefix)
