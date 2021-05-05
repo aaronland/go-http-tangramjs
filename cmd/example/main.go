@@ -1,23 +1,26 @@
 package main
 
 import (
+	"embed"
 	"errors"
 	"flag"
 	"fmt"
 	"github.com/aaronland/go-http-leaflet"
 	"github.com/aaronland/go-http-tangramjs"
-	"github.com/aaronland/go-http-tangramjs/templates/html"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-func MapHandler(templates *template.Template) (http.Handler, error) {
+//go:embed *.html
+var FS embed.FS
 
-	t := templates.Lookup("map")
+func ExampleHandler(templates *template.Template) (http.Handler, error) {
+
+	t := templates.Lookup("example")
 
 	if t == nil {
-		return nil, errors.New("Missing 'map' template")
+		return nil, errors.New("Missing 'example' template")
 	}
 
 	fn := func(rsp http.ResponseWriter, req *http.Request) {
@@ -36,17 +39,17 @@ func MapHandler(templates *template.Template) (http.Handler, error) {
 
 func main() {
 
-	host := flag.String("host", "localhost", "...")
-	port := flag.Int("port", 8080, "...")
-	api_key := flag.String("api-key", "", "...")
+	host := flag.String("host", "localhost", "The host name to listen for requests on.")
+	port := flag.Int("port", 8080, "The port number to list for requests on.")
+	api_key := flag.String("api-key", "", "A valid Nextzen API key.")
 
 	style_url := flag.String("style-url", "/tangram/refill-style.zip", "A valid Leaflet layer tile URL")
 
-	append_leaflet := flag.Bool("append-leaflet", true, "...")
+	append_leaflet := flag.Bool("append-leaflet", true, "Automatically append Leafet.js assets and resources.")
 
 	flag.Parse()
 
-	t, err := template.ParseFS(html.FS, "*.html")
+	t, err := template.ParseFS(FS, "*.html")
 
 	if err != nil {
 		log.Fatalf("Failed to parse templates, %v", err)
@@ -54,7 +57,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	map_handler, err := MapHandler(t)
+	map_handler, err := ExampleHandler(t)
 
 	if err != nil {
 		log.Fatalf("Failed to create map handler, %v", err)
@@ -76,8 +79,8 @@ func main() {
 	}
 
 	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
-	tangramjs_opts.Nextzen.APIKey = *api_key
-	tangramjs_opts.Nextzen.StyleURL = *style_url
+	tangramjs_opts.NextzenOptions.APIKey = *api_key
+	tangramjs_opts.NextzenOptions.StyleURL = *style_url
 
 	map_handler = tangramjs.AppendResourcesHandler(map_handler, tangramjs_opts)
 

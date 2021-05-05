@@ -40,10 +40,10 @@ func DefaultNextzenOptions() *NextzenOptions {
 }
 
 type TangramJSOptions struct {
-	JS      []string
-	CSS     []string
-	Nextzen *NextzenOptions
-	Leaflet *leaflet.LeafletOptions
+	JS             []string
+	CSS            []string
+	NextzenOptions *NextzenOptions
+	LeafletOptions *leaflet.LeafletOptions
 }
 
 func DefaultTangramJSOptions() *TangramJSOptions {
@@ -56,8 +56,8 @@ func DefaultTangramJSOptions() *TangramJSOptions {
 		JS: []string{
 			"/javascript/tangram.min.js",
 		},
-		Leaflet: leaflet_opts,
-		Nextzen: nextzen_opts,
+		LeafletOptions: leaflet_opts,
+		NextzenOptions: nextzen_opts,
 	}
 
 	return opts
@@ -73,9 +73,9 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 	css := opts.CSS
 
 	attrs := map[string]string{
-		"nextzen-api-key":   opts.Nextzen.APIKey,
-		"nextzen-style-url": opts.Nextzen.StyleURL,
-		"nextzen-tile-url":  opts.Nextzen.TileURL,
+		"nextzen-api-key":   opts.NextzenOptions.APIKey,
+		"nextzen-style-url": opts.NextzenOptions.StyleURL,
+		"nextzen-tile-url":  opts.NextzenOptions.TileURL,
 	}
 
 	if prefix != "" {
@@ -103,7 +103,7 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 	}
 
 	if APPEND_LEAFLET_RESOURCES {
-		next = leaflet.AppendResourcesHandlerWithPrefix(next, opts.Leaflet, prefix)
+		next = leaflet.AppendResourcesHandlerWithPrefix(next, opts.LeafletOptions, prefix)
 	}
 
 	return rewrite.AppendResourcesHandler(next, append_opts)
