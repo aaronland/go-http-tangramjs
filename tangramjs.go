@@ -12,10 +12,14 @@ import (
 	"strings"
 )
 
+// NEXTZEN_MVT_ENDPOINT is the default endpoint for Nextzen vector tiles
 const NEXTZEN_MVT_ENDPOINT string = "https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt"
 
-var APPEND_LEAFLET_RESOURCES bool
-var APPEND_LEAFLET_ASSETS bool
+// By default the go-http-tangramjs package will also include and reference Leaflet.js resources using the aaronland/go-http-leaflet package. If you want or need to disable this behaviour set this variable to false.
+var APPEND_LEAFLET_RESOURCES = true
+
+// By default the go-http-tangramjs package will also include and reference Leaflet.js assets using the aaronland/go-http-leaflet package. If you want or need to disable this behaviour set this variable to false.
+var APPEND_LEAFLET_ASSETS = true
 
 type NextzenOptions struct {
 	APIKey   string
@@ -23,9 +27,11 @@ type NextzenOptions struct {
 	TileURL  string
 }
 
-func init() {
-	APPEND_LEAFLET_RESOURCES = true
-	APPEND_LEAFLET_ASSETS = true
+type TangramJSOptions struct {
+	JS             []string
+	CSS            []string
+	NextzenOptions *NextzenOptions
+	LeafletOptions *leaflet.LeafletOptions
 }
 
 func DefaultNextzenOptions() *NextzenOptions {
@@ -37,13 +43,6 @@ func DefaultNextzenOptions() *NextzenOptions {
 	}
 
 	return opts
-}
-
-type TangramJSOptions struct {
-	JS             []string
-	CSS            []string
-	NextzenOptions *NextzenOptions
-	LeafletOptions *leaflet.LeafletOptions
 }
 
 func DefaultTangramJSOptions() *TangramJSOptions {
@@ -63,10 +62,12 @@ func DefaultTangramJSOptions() *TangramJSOptions {
 	return opts
 }
 
+// AppendResourcesHandler will rewrite any HTML produced by previous handler to include the necessary markup to load Tangram.js files and related assets.
 func AppendResourcesHandler(next http.Handler, opts *TangramJSOptions) http.Handler {
 	return AppendResourcesHandlerWithPrefix(next, opts, "")
 }
 
+// AppendResourcesHandlerWithPrefix will rewrite any HTML produced by previous handler to include the necessary markup to load Tangram.js files and related assets ensuring that all URIs are prepended with a prefix.
 func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions, prefix string) http.Handler {
 
 	js := opts.JS
@@ -109,12 +110,14 @@ func AppendResourcesHandlerWithPrefix(next http.Handler, opts *TangramJSOptions,
 	return rewrite.AppendResourcesHandler(next, append_opts)
 }
 
+// AssetsHandler returns a net/http FS instance containing the embedded Tangram.js assets that are included with this package.
 func AssetsHandler() (http.Handler, error) {
 
 	http_fs := http.FS(static.FS)
 	return http.FileServer(http_fs), nil
 }
 
+// AssetsHandler returns a net/http FS instance containing the embedded Tangram.js assets that are included with this package ensuring that all URLs are stripped of prefix.
 func AssetsHandlerWithPrefix(prefix string) (http.Handler, error) {
 
 	fs_handler, err := AssetsHandler()
@@ -138,10 +141,12 @@ func AssetsHandlerWithPrefix(prefix string) (http.Handler, error) {
 	return rewrite_handler, nil
 }
 
+// Append all the files in the net/http FS instance containing the embedded Tangram.js assets to an *http.ServeMux instance.
 func AppendAssetHandlers(mux *http.ServeMux) error {
 	return AppendAssetHandlersWithPrefix(mux, "")
 }
 
+// Append all the files in the net/http FS instance containing the embedded Tangram.js assets to an *http.ServeMux instance ensuring that all URLs are prepended with prefix.
 func AppendAssetHandlersWithPrefix(mux *http.ServeMux, prefix string) error {
 
 	if APPEND_LEAFLET_ASSETS {
