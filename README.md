@@ -79,7 +79,7 @@ go run -mod vendor cmd/example/main.go -api-key XXXXXX
 
 The when you open the URL `http://localhost:8080` in a web browser you should see the following:
 
-![](docs/images/go-http-leaflet-tangramjs-example.png)
+![](docs/images/go-http-tangramjs-example.png)
 
 ## See also
 
