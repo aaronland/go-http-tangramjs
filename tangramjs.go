@@ -21,19 +21,29 @@ var APPEND_LEAFLET_RESOURCES = true
 // By default the go-http-tangramjs package will also include and reference Leaflet.js assets using the aaronland/go-http-leaflet package. If you want or need to disable this behaviour set this variable to false.
 var APPEND_LEAFLET_ASSETS = true
 
+// NextzenOptions provides configuration variables for Nextzen map tiles.
 type NextzenOptions struct {
-	APIKey   string
+	// A valid Nextzen developer API key
+	APIKey string
+	// The URL for a valid Tangram.js style.
 	StyleURL string
-	TileURL  string
+	// The URL template to use for fetching Nextzen map tiles.
+	TileURL string
 }
 
+// TangramJSOptions provides a list of JavaScript and CSS link to include with HTML output as well as options for Nextzen tiles and Leaflet.js.
 type TangramJSOptions struct {
-	JS             []string
-	CSS            []string
+	// A list of Tangram.js Javascript files to append to HTML resources.
+	JS []string
+	// A list of Tangram.js CSS files to append to HTML resources.
+	CSS []string
+	// A NextzenOptions instance.
 	NextzenOptions *NextzenOptions
+	// A leaflet.LeafletOptions instance.
 	LeafletOptions *leaflet.LeafletOptions
 }
 
+// Return a *NextzenOptions struct with default values.
 func DefaultNextzenOptions() *NextzenOptions {
 
 	opts := &NextzenOptions{
@@ -45,6 +55,7 @@ func DefaultNextzenOptions() *NextzenOptions {
 	return opts
 }
 
+// Return a *TangramJSOptions struct with default values.
 func DefaultTangramJSOptions() *TangramJSOptions {
 
 	leaflet_opts := leaflet.DefaultLeafletOptions()
