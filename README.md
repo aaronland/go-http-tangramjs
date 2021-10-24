@@ -166,6 +166,18 @@ func main() {
 }
 ```
 
+The creation of Nextzen vector tile "tilepack" databases is out of scope for this document. Please consult the documentation for the [go-tilepacks build tool](https://github.com/tilezen/go-tilepacks#build) for details on creating custom databases.
+
+It is currently only possible to serve tiles from a single "tilepack" database.
+
+It is not possible to dynamically limit the map to the zoom range and tile extent of a given "tilepack" database. Yet. I'm working on it.
+
+There are precompiled databases with global tile coverage for zoom levels 1-10, 11 and 12 available on the Internet Archive:
+
+* [Global tiles, zoom levels 1 through 10](https://archive.org/details/nextzen-world-2019-1-10) (1.8GB)
+* [Global tiles, zoom level 11](https://archive.org/details/nextzen-world-2019-1-10) (3.5GB)
+* [Global tiles, zoom level 12](https://archive.org/details/nextzen-world-2019-1-10) (7.9GB)
+
 ## See also
 
 * https://github.com/tangrams/tangram
