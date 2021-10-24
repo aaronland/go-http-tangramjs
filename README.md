@@ -89,7 +89,7 @@ It is also possible to use the `go-http-tangramjs` with local Nextzen "tilepack"
 
 Unfortunately it is not possible to enable this functionality with a single "wrapper" method and requires some additional code that you'll need to add manually to your application.
 
-Here is an abbreviated and annotated example of how to use a local "tilepack" in conjunction with the `go-tilepacks`' [MbtilesHandler](https://github.com/tilezen/go-tilepacks/blob/master/http/mbtiles.go) HTTP handler to serve tiles directly from your application.
+Here is an abbreviated and annotated example of how to use a local "tilepack" in conjunction with the `go-tilepacks`' [MbtilesHandler](https://github.com/tilezen/go-tilepacks/blob/master/http/mbtiles.go) HTTP handler to serve tiles directly from your application. Error handling has been removed for the sake of brevity.
 
 ```
 import (
@@ -103,26 +103,29 @@ import (
 
 func main() {
 
-	// These are the normal flags you might set to configure Tangram.js     	
+	// These are the normal flags you might set to configure Tangram.js
+	
 	nextzen_api_key := flag.String("nextzen-api-key", "xxxxxx", "A valid Nextzen API key")
 	nextzen_style_url := flag.String("nextzen-style-url", "/tangram/refill-style.zip", "A valid Nextzen style URL")
 
 	// These next two flags are necessary if you want to enable local tile-serving.
 	// The first flag is the path to a Nextzen MVT "tilepack" as created by the `go-tilepacks/cmd/build` tool.
 	// The second flag is the relative URL that Tangram.js will use to load MVT data.
+	
 	tilepack_db := flag.String("nextzen-tilepack-database", "", "The path to a valid MBTiles database (tilepack) containing Nextzen MVT tiles.")
 	tilepack_uri := flag.String("nextzen-tilepack-uri", "/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt", "The relative URI to serve Nextzen MVT tiles from a MBTiles database (tilepack).")
 
 	flag.Parse()
 
-	// Create a new ServeMux for handlings requests
-	mux := http.NewServeMux()
-
-	// Append Tangram.js assets handlers to the mux
+	// Create a new ServeMux for handlings requests and 
+	// append Tangram.js assets handlers to the mux
+	
+	mux := http.NewServeMux()	
 	tangramjs.AppendAssetHandlers(mux)
 
 	// Create a default TangramJSOptions instance
 	// Assign the API key and style URL as usual
+	
 	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
 	tangramjs_opts.NextzenOptions.APIKey = *nextzen_api_key
 	tangramjs_opts.NextzenOptions.StyleURL = *nextzen_style_url
@@ -130,12 +133,14 @@ func main() {
 	// If tilepack_db is not empty the first thing we want to is
 	// update the tile URL that Tangram.js will use to find vector
 	// data to point to the value of the `tilepack_uri` flag
+	
 	if *tilepack_db != "" {
 		tangramjs_opts.NextzenOptions.TileURL = *tilepack_uri
 	}
 
 	// Create the `net/http` handler that will serve your appliction
 	// In this example "YourWWWHandler" is just a placeholder
+	
 	www_handler, _ := YourWWWHandler()
 
 	// Append the Tangram.js resources to your application handler
@@ -147,6 +152,7 @@ func main() {
 	// instance. Then use that reader to create a `net/http` handler for serving
 	// tile requests. If you are configuring a mux handler to listen for requests
 	// on "/" it is important that you configure your local tile handler afterward.
+	
 	if *tilepack_db != "" {
 
 		tiles_reader, _ := tilepack.NewMbtilesReader(*tilepack_db)
@@ -155,6 +161,7 @@ func main() {
 		// In this example we take the first leaf from the value of the `tilepack_uri`
 		// flag ("/tilezen/") and use it to configure the mux instance for serving
 		// tile requests.
+		
 		u := strings.TrimLeft(*tilepack_uri, "/")
 		p := strings.Split(u, "/")
 		path_tiles := fmt.Sprintf("/%s/", p[0])
