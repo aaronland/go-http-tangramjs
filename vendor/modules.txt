@@ -2,9 +2,9 @@
 ## explicit
 github.com/aaronland/go-http-leaflet
 github.com/aaronland/go-http-leaflet/static
-# github.com/aaronland/go-http-rewrite v0.0.7
+# github.com/aaronland/go-http-rewrite v1.0.0
 ## explicit
 github.com/aaronland/go-http-rewrite
-# golang.org/x/net v0.0.0-20210525063256-abc453219eb5
+# golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
 golang.org/x/net/html
 golang.org/x/net/html/atom
