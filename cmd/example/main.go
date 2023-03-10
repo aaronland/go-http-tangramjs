@@ -5,11 +5,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/aaronland/go-http-leaflet"
-	"github.com/aaronland/go-http-tangramjs"
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/aaronland/go-http-leaflet"
+	"github.com/aaronland/go-http-tangramjs"
 )
 
 //go:embed *.html
@@ -47,6 +48,8 @@ func main() {
 
 	append_leaflet := flag.Bool("append-leaflet", true, "Automatically append Leafet.js assets and resources.")
 
+	js_eof := flag.Bool("javascript-at-eof", false, "Append JavaScript resources to end of HTML file.")
+
 	flag.Parse()
 
 	t, err := template.ParseFS(FS, "*.html")
@@ -81,6 +84,7 @@ func main() {
 	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
 	tangramjs_opts.NextzenOptions.APIKey = *api_key
 	tangramjs_opts.NextzenOptions.StyleURL = *style_url
+	tangramjs_opts.AppendJavaScriptAtEOF = *js_eof
 
 	map_handler = tangramjs.AppendResourcesHandler(map_handler, tangramjs_opts)
 

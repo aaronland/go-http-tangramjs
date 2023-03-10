@@ -17,21 +17,22 @@
 	<div id="map"></div>
     </body>
     <script>
-
-     var api_key = document.body.getAttribute("data-nextzen-api-key");
-     var style_url = document.body.getAttribute("data-nextzen-style-url");
-     var tile_url = document.body.getAttribute("data-nextzen-tile-url");
-     
-     var map = L.map("map");    
-
-     var tangramOptions = {
-         scene: {
-             import: [
-                 style_url
-             ],
-             sources: {
-                 mapzen: {
-                     url: tile_url,
+	window.addEventListener("load", function load(event){
+	
+	var api_key = document.body.getAttribute("data-nextzen-api-key");
+	var style_url = document.body.getAttribute("data-nextzen-style-url");
+	var tile_url = document.body.getAttribute("data-nextzen-tile-url");
+	
+	var map = L.map("map");    
+	
+	var tangramOptions = {
+        scene: {
+        import: [
+        style_url
+        ],
+        sources: {
+        mapzen: {
+        url: tile_url,
                      url_subdomains: ['a', 'b', 'c', 'd'],
                      url_params: {api_key: api_key},
                      tile_size: 512,
@@ -44,7 +45,9 @@
      var tangramLayer = Tangram.leafletLayer(tangramOptions);
      tangramLayer.addTo(map);
      
-     map.setView([40.70531887544228, -74.00976419448853], 15);
+	map.setView([40.70531887544228, -74.00976419448853], 15);
+
+	 });	 	    
     </script>
 </html>
 {{ end }}
