@@ -3,6 +3,7 @@ package tangramjs
 import (
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"net/url"
@@ -111,13 +112,13 @@ func AppendResourcesHandler(next http.Handler, opts *TangramJSOptions) http.Hand
 
 	if opts.RollupAssets {
 
-		if len(opts.JS) > 0 {
+		if len(opts.JS) > 1 {
 			js_uris = []string{
 				"/javascript/tangramjs.rollup.js",
 			}
 		}
 
-		if len(opts.CSS) > 0 {
+		if len(opts.CSS) > 1 {
 			css_uris = []string{
 				"/css/tangramjs.rollup.css",
 			}
@@ -151,6 +152,16 @@ func AppendAssetHandlers(mux *http.ServeMux, opts *TangramJSOptions) error {
 		return aa_static.AppendStaticAssetHandlersWithPrefix(mux, static.FS, opts.Prefix)
 	}
 
+	// START OF make sure we are still serving bundled Tangram styles
+
+	err := serveSubDir(mux, opts, "tangram")
+
+	if err != nil {
+		return fmt.Errorf("Failed to append static asset handler for tangram FS, %w", err)
+	}
+
+	// END OF make sure we are still serving bundled Tangram styles
+
 	// START OF this should eventually be made a generic function in go-http-rollup
 
 	js_paths := make([]string, len(opts.JS))
@@ -166,7 +177,17 @@ func AppendAssetHandlers(mux *http.ServeMux, opts *TangramJSOptions) error {
 		css_paths[idx] = path
 	}
 
-	if len(js_paths) > 0 {
+	switch len(js_paths) {
+	case 0:
+		// pass
+	case 1:
+		err := serveSubDir(mux, opts, "javascript")
+
+		if err != nil {
+			return fmt.Errorf("Failed to append static asset handler for javascript FS, %w", err)
+		}
+
+	default:
 
 		rollup_js_paths := map[string][]string{
 			"tangramjs.rollup.js": js_paths,
@@ -202,7 +223,18 @@ func AppendAssetHandlers(mux *http.ServeMux, opts *TangramJSOptions) error {
 
 	// CSS
 
-	if len(css_paths) > 0 {
+	switch len(css_paths) {
+	case 0:
+		// pass
+	case 1:
+
+		err := serveSubDir(mux, opts, "css")
+
+		if err != nil {
+			return fmt.Errorf("Failed to append static asset handler for css FS, %w", err)
+		}
+
+	default:
 
 		rollup_css_paths := map[string][]string{
 			"tangramjs.rollup.css": css_paths,
@@ -237,6 +269,36 @@ func AppendAssetHandlers(mux *http.ServeMux, opts *TangramJSOptions) error {
 	}
 
 	// END OF this should eventually be made a generic function in go-http-rollup
+
+	return nil
+}
+
+func serveSubDir(mux *http.ServeMux, opts *TangramJSOptions, dirname string) error {
+
+	sub_fs, err := fs.Sub(static.FS, dirname)
+
+	if err != nil {
+		return fmt.Errorf("Failed to load %s FS, %w", dirname, err)
+	}
+
+	sub_prefix := dirname
+
+	if opts.Prefix != "" {
+
+		prefix, err := url.JoinPath(opts.Prefix, sub_prefix)
+
+		if err != nil {
+			return fmt.Errorf("Failed to append prefix to %s, %w", sub_prefix, err)
+		}
+
+		sub_prefix = prefix
+	}
+
+	err = aa_static.AppendStaticAssetHandlersWithPrefix(mux, sub_fs, sub_prefix)
+
+	if err != nil {
+		return fmt.Errorf("Failed to append static asset handler for %s FS, %w", dirname, err)
+	}
 
 	return nil
 }
