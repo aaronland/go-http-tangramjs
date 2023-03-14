@@ -1,5 +1,5 @@
-github.com/aaronland/go-http-leaflet v0.3.0 h1:d88rMERw+m+CiwGTPgWL9LoPDpJH9eBH8r+np9pOxLY=
-github.com/aaronland/go-http-leaflet v0.3.0/go.mod h1:5tlCL3eWYRQBpzW7ZxRB7ocwWaW832qTRXkzw/3r+Jo=
+github.com/aaronland/go-http-leaflet v0.4.0 h1:1aUH60aINVtRl0C2k/zLlYIngFOFchKYXlif9CxS6Ys=
+github.com/aaronland/go-http-leaflet v0.4.0/go.mod h1:wdo1JQvSZ3SvTnanwY1vmaRp4Nt7zynAom0MWXtTP6A=
 github.com/aaronland/go-http-rewrite v1.1.0 h1:HhsltNyYRnIz2FR+qANZLx2ykiRuNuNK1JgPonKBLHQ=
 github.com/aaronland/go-http-rewrite v1.1.0/go.mod h1:iA9jQBureJrzO6fTzmRLS+fkbAI1Fna71iTb1hP8n3k=
 github.com/aaronland/go-http-static v0.0.3 h1:0MnYXNwGVDCzre5YwinfPSdAFHInbBbmBv5hJtb/FX8=

@@ -1,4 +1,4 @@
-# github.com/aaronland/go-http-leaflet v0.3.0
+# github.com/aaronland/go-http-leaflet v0.4.0
 ## explicit; go 1.18
 github.com/aaronland/go-http-leaflet
 github.com/aaronland/go-http-leaflet/static
