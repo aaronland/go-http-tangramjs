@@ -49,8 +49,11 @@ func main() {
 	append_leaflet := flag.Bool("append-leaflet", true, "Automatically append Leafet.js assets and resources.")
 
 	js_eof := flag.Bool("javascript-at-eof", false, "Append JavaScript resources to end of HTML file.")
+	rollup_assets := flag.Bool("rollup-assets", false, "Rollup (minify and bundle) JavaScript and CSS assets.")
 
 	flag.Parse()
+
+	logger := log.Default()
 
 	t, err := template.ParseFS(FS, "*.html")
 
@@ -58,51 +61,56 @@ func main() {
 		log.Fatalf("Failed to parse templates, %v", err)
 	}
 
+	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
+	tangramjs_opts.NextzenOptions.APIKey = *api_key
+	tangramjs_opts.NextzenOptions.StyleURL = *style_url
+	tangramjs_opts.AppendJavaScriptAtEOF = *js_eof
+	tangramjs_opts.RollupAssets = *rollup_assets
+	tangramjs_opts.Logger = logger
+
 	mux := http.NewServeMux()
 
 	map_handler, err := ExampleHandler(t)
 
 	if err != nil {
-		log.Fatalf("Failed to create map handler, %v", err)
+		logger.Fatalf("Failed to create map handler, %v", err)
 	}
 
 	if !*append_leaflet {
 
-		tangramjs.APPEND_LEAFLET_RESOURCES = false
-		tangramjs.APPEND_LEAFLET_ASSETS = false
+		tangramjs_opts.AppendLeafletResources = false
+		tangramjs_opts.AppendLeafletAssets = false
 
 		leaflet_opts := leaflet.DefaultLeafletOptions()
+		leaflet_opts.AppendJavaScriptAtEOF = *js_eof
+		leaflet_opts.RollupAssets = *rollup_assets
+
 		map_handler = leaflet.AppendResourcesHandler(map_handler, leaflet_opts)
 
-		err = leaflet.AppendAssetHandlers(mux)
+		err = leaflet.AppendAssetHandlers(mux, leaflet_opts)
 
 		if err != nil {
-			log.Fatalf("Failed to append Leaflet asset handlers, %v", err)
+			logger.Fatalf("Failed to append Leaflet asset handlers, %v", err)
 		}
 	}
-
-	tangramjs_opts := tangramjs.DefaultTangramJSOptions()
-	tangramjs_opts.NextzenOptions.APIKey = *api_key
-	tangramjs_opts.NextzenOptions.StyleURL = *style_url
-	tangramjs_opts.AppendJavaScriptAtEOF = *js_eof
 
 	map_handler = tangramjs.AppendResourcesHandler(map_handler, tangramjs_opts)
 
 	mux.Handle("/", map_handler)
 
-	err = tangramjs.AppendAssetHandlers(mux)
+	err = tangramjs.AppendAssetHandlers(mux, tangramjs_opts)
 
 	if err != nil {
-		log.Fatalf("Failed to append Tangram asset handlers, %v", err)
+		logger.Fatalf("Failed to append Tangram asset handlers, %v", err)
 	}
 
 	endpoint := fmt.Sprintf("%s:%d", *host, *port)
-	log.Printf("Listening for requests on %s\n", endpoint)
+	logger.Printf("Listening for requests on %s\n", endpoint)
 
 	err = http.ListenAndServe(endpoint, mux)
 
 	if err != nil {
-		log.Fatalf("Failed to serve requests, %v", err)
+		logger.Fatalf("Failed to serve requests, %v", err)
 	}
 
 }
