@@ -1,4 +1,4 @@
-GOMOD=readonly
+GOMOD=vendor
 
 example:
 	go run -mod $(GOMOD) cmd/example/main.go -api-key $(APIKEY) -javascript-at-eof -rollup-assets
